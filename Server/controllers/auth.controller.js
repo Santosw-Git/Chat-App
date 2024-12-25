@@ -1,5 +1,6 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs"
+import { generateAccessToken,generateRefreshToken } from "../utils/generateJwt.utils.js";
 
 const userSignUp = async (req, res) => {
     try {
@@ -10,6 +11,7 @@ const userSignUp = async (req, res) => {
         }
 
         const userExists = await User.findOne({ username });
+        
         if (userExists) {
             return res.status(400).json({ error: 'User already exists' });
         }
@@ -22,6 +24,7 @@ const userSignUp = async (req, res) => {
         const saltRounds = 10;
         bcrypt.genSalt(saltRounds, function(err, salt) {
              bcrypt.hash(password, salt, async function(err, hashPassword) {
+
                 const newUser = new User({
                      fullname,
                      username,
@@ -29,11 +32,23 @@ const userSignUp = async (req, res) => {
                      gender,
                      profile_pic: gender === 'male' ? boyProfilePic : girlProfilePic,
                     })
+
+                const accessToken = generateAccessToken(newUser._id,res);
+                const refreshToken = generateRefreshToken(newUser._id,res);
+                newUser.refreshToken = refreshToken;
+
                 await newUser.save();
 
-                res.status(201).json({
+                const options = {
+                    httpOnly: true,
+                    secure:true,
+
+                }
+                
+                res.status(201).cookie("refreshToken",refreshToken,options).json({
                     _id: newUser._id,
                     fullname: newUser.fullname,
+                    accessToken: accessToken,
                     username: newUser.username,
                     profilePic: newUser.profile_pic,
                 });

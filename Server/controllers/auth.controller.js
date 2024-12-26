@@ -63,7 +63,48 @@ const userSignUp = async (req, res) => {
     }
 };
 
-const userLogin = (req,res)=>{};
+
+
+
+const userLogin = async (req,res)=>{
+    try {
+
+        const {username, password} = req.body;
+        const user = await User.findOne({ username: username});
+        if(!user){
+            return res.status(404).json({ error: 'user not found' });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        if(!isPasswordCorrect){
+            return res.status(404).json({ error: 'password incorrect' });
+        }
+
+        const accessToken = generateAccessToken(user._id,res);
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+        }
+
+        res.status(200)
+        .cookie("refreshToken",user.refreshToken, options)
+        .json({
+            _id: user._id,
+            username: user.username,
+            fullname: user.fullname,
+            accessToken: accessToken,
+            profilePicture: user.profile_pic
+        })
+        
+    } catch (error) {
+        console.error("Error details:", error);
+
+        res.status(500).json({ error: 'Internal Server Error', message: error.message });
+        
+    }
+};
 
 const userSignIn = (req,res)=>{}
 export{

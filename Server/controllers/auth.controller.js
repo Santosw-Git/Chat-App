@@ -106,9 +106,22 @@ const userLogin = async (req,res)=>{
     }
 };
 
-const userSignIn = (req,res)=>{}
+const userLogOut = (req,res)=>{
+    try {
+        console.log("helo");
+        
+        res.cookie("jwt",{maxAge:0})
+        res.status(200).json({message: "User logged out"})
+        
+    } catch (error) {
+        console.error("Error details:", error);
+
+        res.status(500).json({ error: 'Internal Server Error', message: error.message });
+        
+    }
+}
 export{
     userLogin,
-    userSignIn,
+    userLogOut,
     userSignUp
 }

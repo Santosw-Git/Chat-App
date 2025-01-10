@@ -110,7 +110,7 @@ const userLogOut = (req,res)=>{
     try {
         console.log("helo");
         
-        res.cookie("jwt",{maxAge:0})
+        res.cookie("refreshToken",{maxAge:0})
         res.status(200).json({message: "User logged out"})
         
     } catch (error) {

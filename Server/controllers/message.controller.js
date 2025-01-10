@@ -1,12 +1,10 @@
 import Conversation from "../model/conversation.model.js";
 import Message from "../model/message.model.js";
 const sendMessage = async(req,res)=>{
-    // console.log("message received");
     try {
         const {message} = req.body;
         const {id:receiverId}=req.params;
         const senderId = req.user._id;
-        // console.log(receiverId);
 
         let conversation = await Conversation.findOne(
             {

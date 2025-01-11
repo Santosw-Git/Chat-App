@@ -10,7 +10,6 @@ const protectRoute = async (req, res, next) => {
         }
 
         const decodedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET_KEY);
-        console.log("Decoded Token:", decodedToken);
         
         const user = await User.findOne({_id:decodedToken.user_Id}).select("-password")
         req.user = user;

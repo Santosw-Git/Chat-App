@@ -43,15 +43,22 @@ const sendMessage = async(req,res)=>{
 }
 
 const getMessage = async( request,res)=>{
-    const {id:recieverId} = request.params;
-    const senderId = request.user._id;
+    try {
+        const {id:recieverId} = request.params;
+        const senderId = request.user._id;
 
 
-    const conversation = await Conversation.findOne({
+        const conversation = await Conversation.findOne({
         participants:{ $all: [recieverId,senderId]}
     }).populate("messages");
 
     return res.status(200).json({messages: conversation.messages})
+    } catch (error) {
+        console.log("Error:" + error.message);
+        return res.status(500).json({error:"Internal Server Error"});
+        
+        
+    }
 }
 
 export {

@@ -42,10 +42,10 @@ const sendMessage = async(req,res)=>{
     }
 }
 
-const getMessage = async( request,res)=>{
+const getMessage = async( req,res)=>{
     try {
         const {id:recieverId} = request.params;
-        const senderId = request.user._id;
+        const senderId = req.user._id;
 
 
         const conversation = await Conversation.findOne({

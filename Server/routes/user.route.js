@@ -1,10 +1,8 @@
 import {Router} from "express";
-import { userLogin, userSignUp,userLogOut } from "../controllers/auth.controller.js";
-const userRouter = new Router();
+import { getUserForSiderBar } from "../controllers/user.controller.js";
+import { protectRoute } from "../middleware/protectRoute.middleware.js";
+const userRouter = Router();
 
-userRouter.post('/signup', userSignUp)
-userRouter.post('/login',userLogin)
-userRouter.post('/logout', userLogOut)
-
+userRouter.get('/',protectRoute,getUserForSiderBar);
 
 export default userRouter;
